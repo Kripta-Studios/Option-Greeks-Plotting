@@ -403,7 +403,7 @@ async def plot_greeks_histogram(
                     
                     else:
                         step = (math.floor(step))
-                        step = (10 ** (step-1))/2
+                        step = (10 ** (step-1))*0.4
                     
                     # Ajustar límites para que sean múltiplos de step:
                     lower_bound = step * np.floor(float(lower_bound) / step)

@@ -37,7 +37,7 @@ def index():
             future = asyncio.run_coroutine_threadsafe(
                 get_options_data(ticker, exp, greek), loop
             )
-            filenames = future.result(timeout=90)
+            filenames = future.result(timeout=120) # If your system is fast, try timeout=90
             
             # Verificar y loggear los paths de las imágenes
             images = []

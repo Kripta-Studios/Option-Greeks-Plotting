@@ -233,7 +233,7 @@ async def plot_greeks_histogram(
         "call": "#90EE90",   # verde claro
         "put": "#FF7F7F",    # rojo claro
         "spot_line": "#C0C0C0",  # gris claro
-        "flip_line": "dimgray"
+        "flip_line": "lightgray"
     }
     
     for greek in GREEKS:
@@ -301,7 +301,7 @@ async def plot_greeks_histogram(
                 "lines.linewidth": 1.2 * 1.5,
                 })
                 plt.rcParams.update({
-                "axes.edgecolor": "gray",
+                "axes.edgecolor": "lightgray",
                 "axes.labelcolor": "lightgray",
                 "xtick.color": "lightgray",
                 "ytick.color": "lightgray",
@@ -310,7 +310,7 @@ async def plot_greeks_histogram(
                 })
                 title = f"{ticker} {value}, {today_ddt_string} for {exp}"
                 plt.title(title.replace("<br>", " "))
-                plt.grid(True, color="dimgray", linewidth=0.4, alpha=0.5)
+                plt.grid(True, color="lightgray", linewidth=0.4, alpha=0.5)
 
                 if "Absolute" in value:
                     plt.bar(
@@ -380,9 +380,9 @@ async def plot_greeks_histogram(
                             plt.axhspan(0, min_n[0] * 1.5, facecolor="red", alpha=0.1)
                         if max_n[2] > 0:
                             plt.axhspan(0, max_n[2] * 1.5, facecolor="green", alpha=0.1)
-                        plt.axhline(y=0, color="dimgray", linestyle="--", label=f"{name} Flip")
+                        plt.axhline(y=0, color="lightgray", linestyle="--", label=f"{name} Flip")
                     elif zeroflip > 0:
-                        plt.axvline(x=zeroflip, color="dimgray", linestyle="--", label=f"{name} Flip: {zeroflip:,.0f}")
+                        plt.axvline(x=zeroflip, color="lightgray", linestyle="--", label=f"{name} Flip: {zeroflip:,.0f}")
                         plt.axvspan(from_strike, zeroflip, facecolor="red", alpha=0.1)
                         plt.axvspan(zeroflip, to_strike, facecolor="green", alpha=0.1)
 

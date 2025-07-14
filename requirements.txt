@@ -15,5 +15,5 @@ python-dotenv==1.1.1
 python_dateutil==2.9.0.post0
 Requests==2.32.4
 tastytrade==10.3.0
-websockets
-websocket-client
+websocket-client==1.8.0
+websockets==15.0.1

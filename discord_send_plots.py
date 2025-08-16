@@ -91,7 +91,7 @@ discord_client = None
 def set_discord_client(client):
     global discord_client
     discord_client = client
-    print(f"Discord client set: {client}")
+    #print(f"Discord client set: {client}")
 
 async def send_plot_to_discord(filenames, ticker, exp, greek, channel_id):
     if discord_client is None:
@@ -130,7 +130,7 @@ async def send_plot_to_discord(filenames, ticker, exp, greek, channel_id):
 
         message = f"{ticker}/{exp}/{greek} at {datetime.now(ZoneInfo("America/New_York")).ctime()} EST"
         await channel.send(message)
-        await channel.send("Only discord bot")
+        await channel.send("Discord and Web Bot")
         print(f"Sent message: {message} to Discord channel {channel_key}")
         # Let discord.File handle the file opening
         files = []
@@ -200,9 +200,10 @@ async def start_scheduler():
     sched.add_job(
         lambda: asyncio.run_coroutine_threadsafe(request_plots(), discord_client.loop).result(),
         CronTrigger.from_crontab(
-            "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59 0-23 * * 0-6",
+            "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59 3-18 * * 0-4",
             timezone=ZoneInfo("America/New_York")
         ),max_instances=3
     )
     sched.start()
     
+

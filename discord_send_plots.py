@@ -91,7 +91,7 @@ discord_client = None
 def set_discord_client(client):
     global discord_client
     discord_client = client
-    #print(f"Discord client set: {client}")
+    print(f"Discord client set: {client}")
 
 async def send_plot_to_discord(filenames, ticker, exp, greek, channel_id):
     if discord_client is None:
@@ -127,11 +127,11 @@ async def send_plot_to_discord(filenames, ticker, exp, greek, channel_id):
                 return
     
     try:
-
-        message = f"{ticker}/{exp}/{greek} at {datetime.now(ZoneInfo("America/New_York")).ctime()} EST"
+        timeInfo = "America/New_York"
+        message = f"{ticker}/{exp}/{greek} at {datetime.now(ZoneInfo(timeInfo)).ctime()} EST"
         await channel.send(message)
-        await channel.send("Discord and Web Bot")
-        print(f"Sent message: {message} to Discord channel {channel_key}")
+        await channel.send("Only discord bot")
+        #print(f"Sent message: {message} to Discord channel {channel_key}")
         # Let discord.File handle the file opening
         files = []
         for i in filenames:
@@ -142,7 +142,7 @@ async def send_plot_to_discord(filenames, ticker, exp, greek, channel_id):
             files.append(tmp)
         for i in files:
             await channel.send(files=i)
-            print(f"Sent {i} to Discord channel {channel_key}")
+            #print(f"Sent {i} to Discord channel {channel_key}")
     except Exception as e:
         print(f"Failed to send {filenames} to {channel_key}: {type(e).__name__} - {e}")
 
@@ -206,4 +206,5 @@ async def start_scheduler():
     )
     sched.start()
     
+
 

@@ -130,7 +130,7 @@ async def send_plot_to_discord(filenames, ticker, exp, greek, channel_id):
         timeInfo = "America/New_York"
         message = f"{ticker}/{exp}/{greek} at {datetime.now(ZoneInfo(timeInfo)).ctime()} EST"
         await channel.send(message)
-        await channel.send("Only discord bot")
+        await channel.send("Web and discord bot")
         #print(f"Sent message: {message} to Discord channel {channel_key}")
         # Let discord.File handle the file opening
         files = []
@@ -206,5 +206,6 @@ async def start_scheduler():
     )
     sched.start()
     
+
 
 

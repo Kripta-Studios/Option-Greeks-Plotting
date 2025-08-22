@@ -188,6 +188,55 @@ async def plot_greeks_table(
                 net_value = df_filtered[metric].sum() * 100
                 ax.plot([], [], ' ', label=f"Net {name}: {net_value:,.2f}")
 
+                # -------------------------------
+                # COMPARACIÓN CON PICKLE ANTERIOR
+                # -------------------------------
+                import pickle
+
+                # Ruta única para el pickle de este ticker/exp/greek
+                prev_pickle_path = f"pickles/{ticker}_{exp}_{greek}_last1.pkl"
+                makedirs(path.dirname(prev_pickle_path), exist_ok=True)
+
+                # DataFrame actual con strikes y valores
+                df_compare = agg_by_strike.reset_index()  # strike_price + exposición
+
+                if path.exists(prev_pickle_path):
+                    try:
+                        df_prev = pd.read_pickle(prev_pickle_path)
+
+                        # Unir strikes actuales con previos
+                        merged = df_compare.merge(df_prev, on="strike_price", suffixes=("", "_prev"), how="inner")
+                        merged["delta_abs"] = merged[metric] - merged[f"{metric}_prev"]
+
+                        # Score = diferencia / sqrt(1 + |valor previo|)
+                        merged["score"] = merged["delta_abs"]
+
+                        # Strike con mayor subida (score positivo máximo)
+                        pos_strike = merged.loc[merged["score"].idxmax(), "strike_price"]
+
+                        # Strike con mayor bajada (score negativo mínimo)
+                        neg_strike = merged.loc[merged["score"].idxmin(), "strike_price"]
+
+                        for s, col, lbl in [
+                            (pos_strike, "orange", "Rising"),
+                            (neg_strike, "blue", "Falling"),
+                        ]:
+                            idx = len(strikes) - np.searchsorted(strikes[::-1], s, side="left") - 1
+                            ax.axhline(
+                                y=idx,
+                                color=col,
+                                linestyle="--",
+                                linewidth=1.5,
+                                label=f"{lbl} {name}: {s:.2f}"
+                            )
+                    except Exception as e:
+                        print(f"Error loading pickle {prev_pickle_path}: {e}")
+
+                # Guardar el estado actual para la próxima ejecución
+                df_compare.to_pickle(prev_pickle_path)
+                
+
+                    
                 # Encontrar el índice en strikes para el máximo y mínimo
                 if not pd.isna(max_positive_strike):
                     max_positive_idx = len(strikes) - np.searchsorted(strikes[::-1], max_positive_strike, side='left') - 1
@@ -422,6 +471,51 @@ async def plot_greeks_histogram(
                         alpha=0.9,
                         color=colors["total"],
                     )
+
+                    # -------------------------------
+                    # Comparación con pickle anterior para líneas de cambio
+                    # -------------------------------
+                    import pickle
+                    prev_pickle_path = f"pickles/{ticker}_{exp}_{greek}_last2.pkl"
+                    makedirs(path.dirname(prev_pickle_path), exist_ok=True)
+                    
+                    df_compare = df_agg.reset_index()  # strike_price + exposure
+                    
+                    if path.exists(prev_pickle_path):
+                        try:
+                            df_prev = pd.read_pickle(prev_pickle_path)
+                    
+                            # Unir strikes actuales con previos
+                            merged = df_compare.merge(df_prev, on="strike_price", suffixes=("", "_prev"), how="inner")
+                            merged["delta_abs"] = merged[f"total_{name.lower()}"] - merged[f"total_{name.lower()}_prev"]
+                    
+                            # Score = diferencia / sqrt(1 + |valor previo|)
+                            merged["score"] = merged["delta_abs"]
+                    
+                            # Strike con mayor subida (score positivo máximo)
+                            pos_strike = merged.loc[merged["score"].idxmax(), "strike_price"]
+                    
+                            # Strike con mayor bajada (score negativo mínimo)
+                            neg_strike = merged.loc[merged["score"].idxmin(), "strike_price"]
+                    
+                            for s, col, lbl in [
+                                (pos_strike, "orange", "Rising"),
+                                (neg_strike, "blue", "Falling"),
+                            ]:
+                                plt.axvline(
+                                    x=s,
+                                    color=col,
+                                    linestyle="--",
+                                    linewidth=1.5,
+                                    label=f"{lbl} {name}: {s:.2f}"
+                                )
+                    
+                        except Exception as e:
+                            print(f"Error loading pickle {prev_pickle_path}: {e}")
+                    
+                    # Guardar el estado actual para la próxima ejecución
+                    df_compare.to_pickle(prev_pickle_path)
+                        
                     if not pd.isna(max_positive_strike):
                         plt.axvline(
                             x=max_positive_strike,
@@ -1362,6 +1456,7 @@ async def get_options_data(ticker, expir, greek_filter):
     
     return [histogram_filename, table_filename]
     
+
 
 
 
